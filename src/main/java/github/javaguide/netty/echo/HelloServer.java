@@ -8,6 +8,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
@@ -17,13 +18,13 @@ import io.netty.handler.logging.LoggingHandler;
  */
 public final class HelloServer {
 
-    private  final int port;
+    private final int port;
 
     public HelloServer(int port) {
         this.port = port;
     }
 
-    private  void start() throws InterruptedException {
+    private void start() throws InterruptedException {
         // 1.bossGroup 用于接收连接，workerGroup 用于具体的处理
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -43,7 +44,9 @@ public final class HelloServer {
                         public void initChannel(SocketChannel ch) {
                             ChannelPipeline p = ch.pipeline();
                             //自定义客户端消息的业务处理逻辑
-                            p.addLast(new HelloServerHandler());
+
+                            p.addLast(new LineBasedFrameDecoder(1024))
+                                    .addLast(new HelloServerHandler());
                         }
                     });
             // 6.绑定端口
@@ -56,6 +59,7 @@ public final class HelloServer {
             workerGroup.shutdownGracefully();
         }
     }
+
     public static void main(String[] args) throws InterruptedException {
         new HelloServer(8080).start();
     }

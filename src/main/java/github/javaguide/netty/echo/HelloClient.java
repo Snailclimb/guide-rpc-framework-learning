@@ -13,6 +13,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
 
 /**
  * Sends one message when a connection is open and echoes back any received
@@ -47,7 +48,8 @@ public final class HelloClient {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
                             // 这里可以自定义消息的业务处理逻辑
-                            p.addLast(new HelloClientHandler(message));
+                            p.addLast(new HelloClientHandler(message))
+                            .addLast(new LineBasedFrameDecoder(1024));
                         }
                     });
             // 尝试建立连接
@@ -59,6 +61,6 @@ public final class HelloClient {
         }
     }
     public static void main(String[] args) throws Exception {
-        new HelloClient("127.0.0.1",8080, "你好").start();
+        new HelloClient("127.0.0.1",8080, "你好,你真帅啊！哥哥！\n").start();
     }
 }
