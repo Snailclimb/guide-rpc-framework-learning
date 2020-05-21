@@ -16,10 +16,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 
 /**
- * Sends one message when a connection is open and echoes back any received
- * data to the server.  Simply put, the echo client initiates the ping-pong
- * traffic between the echo client and server by sending the first message to
- * the server.
+ * @author shuang.kou
+ * @createTime 2020年05月14日 20:47:00
  */
 public final class HelloClient {
 
@@ -48,19 +46,27 @@ public final class HelloClient {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
                             // 这里可以自定义消息的业务处理逻辑
-                            p.addLast(new HelloClientHandler(message))
-                            .addLast(new LineBasedFrameDecoder(1024));
+                            p.addLast(new LineBasedFrameDecoder(1024)).
+                                    addLast(new HelloClientHandler(message));
                         }
                     });
             // 尝试建立连接
-            ChannelFuture f = b.connect(host, port).sync();
+            ChannelFuture f = b.connect(host, port).addListener(future -> {
+                if (future.isSuccess()) {
+                    System.out.println("连接成功!");
+                } else {
+                    System.err.println("连接失败!");
+                }
+            }).sync();
             // 等待连接关闭
             f.channel().closeFuture().sync();
         } finally {
+            // 优雅关闭相关线程组资源
             group.shutdownGracefully();
         }
     }
+
     public static void main(String[] args) throws Exception {
-        new HelloClient("127.0.0.1",8080, "你好,你真帅啊！哥哥！\n").start();
+        new HelloClient("127.0.0.1", 8080, "你好,你真帅啊！哥哥！\n").start();
     }
 }

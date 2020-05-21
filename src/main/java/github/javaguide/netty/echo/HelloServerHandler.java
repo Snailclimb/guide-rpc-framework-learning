@@ -21,7 +21,7 @@ public class HelloServerHandler extends ChannelInboundHandlerAdapter {
             ByteBuf in = (ByteBuf) msg;
             System.out.println("message from client:" + in.toString(CharsetUtil.UTF_8));
             // 发送消息给客户端
-            ctx.writeAndFlush(Unpooled.copiedBuffer("你也好！", CharsetUtil.UTF_8));
+            ctx.writeAndFlush(Unpooled.copiedBuffer("你也好！\n", CharsetUtil.UTF_8));
         } finally {
             ReferenceCountUtil.release(msg);
         }

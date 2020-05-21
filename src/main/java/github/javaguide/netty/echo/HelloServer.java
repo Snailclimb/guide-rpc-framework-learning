@@ -44,7 +44,6 @@ public final class HelloServer {
                         public void initChannel(SocketChannel ch) {
                             ChannelPipeline p = ch.pipeline();
                             //自定义客户端消息的业务处理逻辑
-
                             p.addLast(new LineBasedFrameDecoder(1024))
                                     .addLast(new HelloServerHandler());
                         }
