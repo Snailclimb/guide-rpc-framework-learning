@@ -22,7 +22,7 @@ public class NettyKryoDecoder extends ByteToMessageDecoder {
     private static final int HEAD_LENGTH = 4;
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
+    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) {
         if (byteBuf.readableBytes() < HEAD_LENGTH) {
             return;
         }
