@@ -1,6 +1,7 @@
 package github.javaguide.netty.kyro.server;
 
 import github.javaguide.netty.kyro.client.KryoClientHandler;
+import github.javaguide.netty.kyro.dto.RpcRequest;
 import github.javaguide.netty.kyro.dto.RpcResponse;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -22,6 +23,8 @@ public class KryoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
+            RpcRequest rpcRequest=(RpcRequest)msg;
+            System.out.println(String.format("server receive msg: %s", rpcRequest));
             RpcResponse messageFromServer = RpcResponse.builder().message("message from server").build();
             System.out.println("Server write msg: " + messageFromServer);
             ChannelFuture f = ctx.writeAndFlush(messageFromServer);

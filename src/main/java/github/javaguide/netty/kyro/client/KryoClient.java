@@ -1,7 +1,7 @@
 package github.javaguide.netty.kyro.client;
 
-import github.javaguide.netty.kyro.NettyKryoDecoder;
-import github.javaguide.netty.kyro.NettyKryoEncoder;
+import github.javaguide.netty.kyro.codec.NettyKryoDecoder;
+import github.javaguide.netty.kyro.codec.NettyKryoEncoder;
 import github.javaguide.netty.kyro.dto.RpcRequest;
 import github.javaguide.netty.kyro.dto.RpcResponse;
 import github.javaguide.netty.kyro.serialize.KryoSerializer;
@@ -33,6 +33,7 @@ public class KryoClient {
         this.port = port;
     }
 
+    // 初始化相关资源比如 EventLoopGroup、Bootstrap
     static {
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         b = new Bootstrap();

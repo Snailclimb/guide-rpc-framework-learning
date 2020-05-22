@@ -1,8 +1,7 @@
 package github.javaguide.netty.kyro.server;
 
-import github.javaguide.netty.kyro.NettyKryoDecoder;
-import github.javaguide.netty.kyro.NettyKryoEncoder;
-import github.javaguide.netty.kyro.client.KryoClient;
+import github.javaguide.netty.kyro.codec.NettyKryoDecoder;
+import github.javaguide.netty.kyro.codec.NettyKryoEncoder;
 import github.javaguide.netty.kyro.dto.RpcRequest;
 import github.javaguide.netty.kyro.dto.RpcResponse;
 import github.javaguide.netty.kyro.serialize.KryoSerializer;
@@ -27,11 +26,11 @@ public class KryoServer {
     private static final Logger logger = LoggerFactory.getLogger(KryoServer.class);
     private final int port;
 
-    public KryoServer(int port) {
+    private KryoServer(int port) {
         this.port = port;
     }
 
-    public void run() {
+    private void run() {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         KryoSerializer kryoSerializer = new KryoSerializer();

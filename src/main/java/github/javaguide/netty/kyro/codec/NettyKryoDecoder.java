@@ -1,4 +1,4 @@
-package github.javaguide.netty.kyro;
+package github.javaguide.netty.kyro.codec;
 
 import github.javaguide.netty.kyro.serialize.Serializer;
 import io.netty.buffer.ByteBuf;

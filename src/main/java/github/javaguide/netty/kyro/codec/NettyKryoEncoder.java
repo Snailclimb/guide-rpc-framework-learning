@@ -1,4 +1,4 @@
-package github.javaguide.netty.kyro;
+package github.javaguide.netty.kyro.codec;
 
 import github.javaguide.netty.kyro.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
@@ -17,12 +17,14 @@ public class NettyKryoEncoder extends MessageToByteEncoder<Object> {
 
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object o, ByteBuf byteBuf) {
-        // 1. 将对象转换为byte
-        byte[] body = serializer.serialize(o);
-        // 2. 读取消息的长度
-        int dataLength = body.length;
-        // 3. 先将消息长度写入，也就是消息头
-        byteBuf.writeInt(dataLength);
-        byteBuf.writeBytes(body);
+        if (genericClass.isInstance(o)) {
+            // 1. 将对象转换为byte
+            byte[] body = serializer.serialize(o);
+            // 2. 读取消息的长度
+            int dataLength = body.length;
+            // 3. 先将消息长度写入，也就是消息头
+            byteBuf.writeInt(dataLength);
+            byteBuf.writeBytes(body);
+        }
     }
 }
