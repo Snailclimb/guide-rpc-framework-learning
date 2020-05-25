@@ -54,6 +54,12 @@ public class KryoClient {
                 });
     }
 
+    /**
+     * 发送消息到服务端
+     *
+     * @param rpcRequest 消息体
+     * @return 服务端返回的数据
+     */
     public RpcResponse sendMessage(RpcRequest rpcRequest) {
         try {
             ChannelFuture f = b.connect(host, port).sync();
@@ -83,7 +89,9 @@ public class KryoClient {
                 .interfaceName("interface")
                 .methodName("hello").build();
         KryoClient kryoClient = new KryoClient("127.0.0.1", 8889);
-        kryoClient.sendMessage(rpcRequest);
+        for (int i = 0; i <100 ; i++) {
+            kryoClient.sendMessage(rpcRequest);
+        }
         RpcResponse rpcResponse = kryoClient.sendMessage(rpcRequest);
         System.out.println(rpcResponse.toString());
     }

@@ -15,6 +15,9 @@ public class NettyKryoEncoder extends MessageToByteEncoder<Object> {
     private Serializer serializer;
     private Class<?> genericClass;
 
+    /**
+     * 将对象转换为字节码然后写入到 ByteBuf 对象中
+     */
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object o, ByteBuf byteBuf) {
         if (genericClass.isInstance(o)) {
@@ -22,8 +25,9 @@ public class NettyKryoEncoder extends MessageToByteEncoder<Object> {
             byte[] body = serializer.serialize(o);
             // 2. 读取消息的长度
             int dataLength = body.length;
-            // 3. 先将消息长度写入，也就是消息头
+            // 3.写入消息对应的字节数组长度,writerIndex 加 4
             byteBuf.writeInt(dataLength);
+            //4.将字节数组写入 ByteBuf 对象中
             byteBuf.writeBytes(body);
         }
     }
