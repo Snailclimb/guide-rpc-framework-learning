@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
  * @author shuang.kou
  * @createTime 2020年05月13日 19:19:00
  */
-public class KryoServer {
-    private static final Logger logger = LoggerFactory.getLogger(KryoServer.class);
+public class NettyServer {
+    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
     private final int port;
 
-    private KryoServer(int port) {
+    private NettyServer(int port) {
         this.port = port;
     }
 
@@ -38,19 +38,21 @@ public class KryoServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
+                    // TCP默认开启了 Nagle 算法，该算法的作用是尽可能的发送大数据快，减少网络传输。TCP_NODELAY 参数的作用就是控制是否启用 Nagle 算法。
+                    .childOption(ChannelOption.TCP_NODELAY, true)
+                    // 是否开启 TCP 底层心跳机制
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    //表示系统用于临时存放已完成三次握手的请求的队列的最大长度,如果连接建立频繁，服务器处理创建新连接较慢，可以适当调大这个参数
+                    .option(ChannelOption.SO_BACKLOG, 128)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(new NettyKryoDecoder(kryoSerializer, RpcRequest.class));
                             ch.pipeline().addLast(new NettyKryoEncoder(kryoSerializer, RpcResponse.class));
-                            ch.pipeline().addLast(new KryoServerHandler());
+                            ch.pipeline().addLast(new NettyServerHandler());
                         }
-                    })
-                    // 设置tcp缓冲区
-                    .childOption(ChannelOption.TCP_NODELAY, true)
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .option(ChannelOption.SO_KEEPALIVE, true);
+                    });
 
             // 绑定端口，同步等待绑定成功
             ChannelFuture f = b.bind(port).sync();
@@ -65,7 +67,7 @@ public class KryoServer {
     }
 
     public static void main(String[] args) {
-        new KryoServer(8889).run();
+        new NettyServer(8889).run();
     }
 
 }

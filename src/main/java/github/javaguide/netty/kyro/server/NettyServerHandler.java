@@ -1,6 +1,5 @@
 package github.javaguide.netty.kyro.server;
 
-import github.javaguide.netty.kyro.client.KryoClientHandler;
 import github.javaguide.netty.kyro.dto.RpcRequest;
 import github.javaguide.netty.kyro.dto.RpcResponse;
 import io.netty.channel.ChannelFuture;
@@ -17,9 +16,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author shuang.kou
  * @createTime 2020年05月13日 20:44:00
  */
-public class KryoServerHandler extends ChannelInboundHandlerAdapter {
+public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(KryoServerHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
     private static final AtomicInteger atomicInteger = new AtomicInteger(1);
 
     @Override

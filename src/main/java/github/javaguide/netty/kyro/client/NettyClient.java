@@ -14,6 +14,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,34 +24,39 @@ import org.slf4j.LoggerFactory;
  * @author shuang.kou
  * @createTime 2020年05月13日 20:48:00
  */
-public class KryoClient {
-    private static final Logger logger = LoggerFactory.getLogger(KryoClient.class);
-    private String host;
-    private int port;
+public class NettyClient {
+    private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
+    private final String host;
+    private final int port;
     private static final Bootstrap b;
 
-    public KryoClient(String host, int port) {
+    public NettyClient(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
-    // 初始化相关资源比如 EventLoopGroup、Bootstrap
+    // 初始化相关资源比如 EventLoopGroup, Bootstrap
     static {
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         b = new Bootstrap();
         KryoSerializer kryoSerializer = new KryoSerializer();
         b.group(eventLoopGroup)
                 .channel(NioSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(new LoggingHandler(LogLevel.INFO))
+                // 连接的超时时间，超过这个时间还是建立不上的话则代表连接失败
+                //  如果 15 秒之内没有发送数据给服务端的话，就发送一次心跳请求
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
-                        /*自定义序列化编解码器*/
+                        /*
+                         自定义序列化编解码器
+                         */
                         // RpcResponse -> ByteBuf
                         ch.pipeline().addLast(new NettyKryoDecoder(kryoSerializer, RpcResponse.class));
                         // ByteBuf -> RpcRequest
                         ch.pipeline().addLast(new NettyKryoEncoder(kryoSerializer, RpcRequest.class));
-                        ch.pipeline().addLast(new KryoClientHandler());
+                        ch.pipeline().addLast(new NettyClientHandler());
                     }
                 });
     }
@@ -69,7 +76,7 @@ public class KryoClient {
             if (futureChannel != null) {
                 futureChannel.writeAndFlush(rpcRequest).addListener(future -> {
                     if (future.isSuccess()) {
-                        logger.info(String.format("client send message: %s", rpcRequest.toString()));
+                        logger.info("client send message: [{}]", rpcRequest.toString());
                     } else {
                         logger.error("Send failed:", future.cause());
                     }
@@ -88,11 +95,11 @@ public class KryoClient {
         RpcRequest rpcRequest = RpcRequest.builder()
                 .interfaceName("interface")
                 .methodName("hello").build();
-        KryoClient kryoClient = new KryoClient("127.0.0.1", 8889);
-        for (int i = 0; i <100 ; i++) {
-            kryoClient.sendMessage(rpcRequest);
+        NettyClient nettyClient = new NettyClient("127.0.0.1", 8889);
+        for (int i = 0; i < 100; i++) {
+            nettyClient.sendMessage(rpcRequest);
         }
-        RpcResponse rpcResponse = kryoClient.sendMessage(rpcRequest);
+        RpcResponse rpcResponse = nettyClient.sendMessage(rpcRequest);
         System.out.println(rpcResponse.toString());
     }
 }
