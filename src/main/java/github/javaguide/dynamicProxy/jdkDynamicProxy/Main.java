@@ -1,4 +1,4 @@
-package github.javaguide.jdkDynamicProxy;
+package github.javaguide.dynamicProxy.jdkDynamicProxy;
 
 /**
  * @author shuang.kou

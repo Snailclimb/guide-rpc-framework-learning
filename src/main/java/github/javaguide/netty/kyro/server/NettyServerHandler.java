@@ -25,10 +25,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
             RpcRequest rpcRequest = (RpcRequest) msg;
-            System.out.println(String.format("server receive msg: %s", rpcRequest));
+            logger.info("server receive msg: [{}] ,times:[{}]", rpcRequest, atomicInteger.getAndIncrement());
             RpcResponse messageFromServer = RpcResponse.builder().message("message from server").build();
-            System.out.println("Server write msg: " + messageFromServer);
-            System.out.println("times:"+atomicInteger.getAndIncrement());
             ChannelFuture f = ctx.writeAndFlush(messageFromServer);
             f.addListener(ChannelFutureListener.CLOSE);
         } finally {
@@ -38,8 +36,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("server catch exception");
-        cause.printStackTrace();
+        logger.error("server catch exception", cause);
         ctx.close();
     }
 }
