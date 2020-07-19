@@ -6,8 +6,8 @@ package github.javaguide.dynamicProxy.jdkDynamicProxy;
  */
 public class Main {
     public static void main(String[] args) {
-        DebugProxy debugProxy = new DebugProxy(new SmsServiceImpl());
-        SmsService smsService = debugProxy.getProxy(SmsService.class);
-        smsService.send("java");
+        SmsService smsService = new SmsServiceImpl();
+        SmsService smsServiceImplProxy = (SmsService) JdkProxyFactory.getProxy(smsService);
+        smsServiceImplProxy.send("java");
     }
 }
