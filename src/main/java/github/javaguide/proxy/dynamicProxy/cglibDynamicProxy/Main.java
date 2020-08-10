@@ -1,4 +1,4 @@
-package github.javaguide.dynamicProxy.cglibDynamicProxy;
+package github.javaguide.proxy.dynamicProxy.cglibDynamicProxy;
 
 public class Main {
     public static void main(String[] args) {

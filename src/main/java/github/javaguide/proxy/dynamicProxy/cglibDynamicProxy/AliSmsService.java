@@ -1,4 +1,4 @@
-package github.javaguide.dynamicProxy.cglibDynamicProxy;
+package github.javaguide.proxy.dynamicProxy.cglibDynamicProxy;
 
 public class AliSmsService {
     public String send(String message) {

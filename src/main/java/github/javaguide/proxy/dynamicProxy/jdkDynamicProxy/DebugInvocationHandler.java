@@ -1,4 +1,4 @@
-package github.javaguide.dynamicProxy.jdkDynamicProxy;
+package github.javaguide.proxy.dynamicProxy.jdkDynamicProxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;

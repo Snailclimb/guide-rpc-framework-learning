@@ -1,4 +1,4 @@
-package github.javaguide.dynamicProxy.cglibDynamicProxy;
+package github.javaguide.proxy.dynamicProxy.cglibDynamicProxy;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
